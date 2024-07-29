@@ -1,0 +1,45 @@
+version: "3.7"
+services:
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    ports: 
+      - "8080:80"
+    networks:
+      - internal
+    volumes:
+      - .:/var/www/html/
+      - ./logs/nginx:/var/log/nginx/
+
+  php:
+    build:
+      context: .
+      dockerfile: php/Dockerfile
+    networks:
+      - internal
+    volumes:
+      - .:/var/www/html/
+      - ./logs/php.log:/var/log/fpm-php.www.log
+
+  psql:
+    image: postgres
+    volumes:
+      - psql-data:/var/lib/postgresql/data
+      - ./psql_init:/docker-entrypoint-initdb.d
+    networks:
+      - internal
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Password123450
+      POSTGRES_DB: laravel-dock
+    ports:
+      - 5900:5432
+
+volumes:
+   psql-data:
+   
+networks:
+  internal:
+    driver: bridge
