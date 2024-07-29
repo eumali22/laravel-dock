@@ -1,0 +1,3 @@
+logs/*
+logs/nginx
+logs/nginx/*
